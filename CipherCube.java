@@ -11,15 +11,15 @@ public class CipherCube {
     private StringBuilder ciphertext = new StringBuilder("");
     private StringBuilder key = new StringBuilder("11301 12412 13113");
     /*
-    for key : column or row (0 or 1), face number (1-6), row index (0-4), 
-    left or right/up or down (0 or 1), number of moves: four moves will reset 
-    to original position so use (1,2, or 3)
+     for key : column or row (0 or 1), face number (1-6), row index (0-4), 
+     left or right/up or down (0 or 1), number of moves: four moves will reset 
+     to original position so use (1,2, or 3)
     
-    ie: "11301 12412 13113" would mean:
-    "move face 1's fourth row left once, then move face 2's fifth row right twice,
-    then move face 3's second row right three times"
-    */
-   
+     ie: "11301 12412 13113" would mean:
+     "move face 1's fourth row left once, then move face 2's fifth row right twice,
+     then move face 3's second row right three times"
+     */
+
     private int start = 0;
     private Character[][] square1 = new Character[5][5];
     private Character[][] square2 = new Character[5][5];
@@ -34,7 +34,6 @@ public class CipherCube {
      */
     public CipherCube(String text, Boolean spec) {
         Character[][] ref;
-        
 
         if (spec) {
             this.ciphertext.append(text);
@@ -43,7 +42,7 @@ public class CipherCube {
             this.plaintext.append(text);
             this.cipher(key);
         }
-        
+
         if (text.length() != 150) {
             text = this.pad(text);
             this.plaintext.append(text);
@@ -99,49 +98,49 @@ public class CipherCube {
         }
         // test if squares are filled
 /*
-        for (int i = 0; i < 5; i++) {
-            System.out.println();
-            for (int j = 0; j < 5; j++) {
+         for (int i = 0; i < 5; i++) {
+         System.out.println();
+         for (int j = 0; j < 5; j++) {
 
-                System.out.print(square1[i][j] + " ");
-            }
-        }
-        for (int i = 0; i < 5; i++) {
-            System.out.println();
-            for (int j = 0; j < 5; j++) {
+         System.out.print(square1[i][j] + " ");
+         }
+         }
+         for (int i = 0; i < 5; i++) {
+         System.out.println();
+         for (int j = 0; j < 5; j++) {
 
-                System.out.print(square2[i][j] + " ");
-            }
-        }
-        for (int i = 0; i < 5; i++) {
-            System.out.println();
-            for (int j = 0; j < 5; j++) {
+         System.out.print(square2[i][j] + " ");
+         }
+         }
+         for (int i = 0; i < 5; i++) {
+         System.out.println();
+         for (int j = 0; j < 5; j++) {
 
-                System.out.print(square3[i][j] + " ");
-            }
-        }
-        for (int i = 0; i < 5; i++) {
-            System.out.println();
-            for (int j = 0; j < 5; j++) {
+         System.out.print(square3[i][j] + " ");
+         }
+         }
+         for (int i = 0; i < 5; i++) {
+         System.out.println();
+         for (int j = 0; j < 5; j++) {
 
-                System.out.print(square4[i][j] + " ");
-            }
-        }
-        for (int i = 0; i < 5; i++) {
-            System.out.println();
-            for (int j = 0; j < 5; j++) {
+         System.out.print(square4[i][j] + " ");
+         }
+         }
+         for (int i = 0; i < 5; i++) {
+         System.out.println();
+         for (int j = 0; j < 5; j++) {
 
-                System.out.print(square5[i][j] + " ");
-            }
-        }
-        for (int i = 0; i < 5; i++) {
-            System.out.println();
-            for (int j = 0; j < 5; j++) {
+         System.out.print(square5[i][j] + " ");
+         }
+         }
+         for (int i = 0; i < 5; i++) {
+         System.out.println();
+         for (int j = 0; j < 5; j++) {
 
-                System.out.print(square6[i][j] + " ");
-            }
-        }
-        */
+         System.out.print(square6[i][j] + " ");
+         }
+         }
+         */
     }
 
     public static void main(String[] args) throws IOException {
@@ -177,15 +176,79 @@ public class CipherCube {
         return text;
     }
 
-    
-
     private void cipher(StringBuilder key) {
-        
-        
+        String[] arr = key.toString().split(" ");
+        for (String e : arr) {
+            if (e.charAt(0) == 0) {
+                columnSwap(e);
+            } else if (e.charAt(0) == 1) {
+                rowSwap(e);
+            }
+        }
+
+    }
+
+    private void columnSwap(String subKey) {
+          // face can be 1-6
+        char face = subKey.charAt(1);
+        //index can be 0-4
+        char index = subKey.charAt(2);
+        //direction can be up or down (0 or 1)
+        char direction = subKey.charAt(3);
+        //numberOfMoves can be 1-3
+        char numberOfMoves = subKey.charAt(4);
+
+        switch (face) {
+            case '1':
+                // figure out which columns can swap with which
+                break;
+            case '2':
+                break;
+            case '3':
+                break;
+            case '4':
+                break;
+            case '5':
+                break;
+            case '6':
+                break;
+            default:
+                System.exit(1);
+
+        }
+    }
+
+    private void rowSwap(String subKey) {
+        // face can be 1-6 
+        char face = subKey.charAt(1);
+        //index can be 0-4
+        char index = subKey.charAt(2);
+        //direction can be left or right (0 or 1)
+        char direction = subKey.charAt(3);
+        //numberOfMoves can be 1-3
+        char numberOfMoves = subKey.charAt(4);
+
+        switch (face) {
+            case '1':
+                // figure out which columns can swap with which
+                break;
+            case '2':
+                break;
+            case '3':
+                break;
+            case '4':
+                break;
+            case '5':
+                break;
+            case '6':
+                break;
+            default:
+                System.exit(1);
+        }
     }
 
     private void decipher() {
-        
+
         System.out.println("feature not yet supported");
     }
 
