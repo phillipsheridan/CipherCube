@@ -9,13 +9,11 @@ public class CipherCube {
 
     private StringBuilder plaintext = new StringBuilder("");
     private StringBuilder ciphertext = new StringBuilder("");
-    //for column key : face number, column index, up or down, (1,2, or 3) 
-    // depends on number of moves, four moves will reset to original position
     private StringBuilder key = new StringBuilder("11301 12412 13113");
     /*
-    for key : column or row (0 or 1), face number(1-6), row index(0-4), 
-    left or right (0 or 1), number of moves, four moves will reset 
-    to original position(1,2, or 3)
+    for key : column or row (0 or 1), face number (1-6), row index (0-4), 
+    left or right/up or down (0 or 1), number of moves: four moves will reset 
+    to original position so use (1,2, or 3)
     
     ie: "11301 12412 13113" would mean:
     "move face 1's fourth row left once, then move face 2's fifth row right twice,
