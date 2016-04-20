@@ -1,4 +1,18 @@
 
+
+//notes
+
+/*
+- need right rotate method
+- need upside down method
+- mapping:
+Face 1:
+move a row left: 1 -> 4, 4 -> 3, 3 -> 2, 2 -> 1
+move a row right: 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 1
+move a column up: 1 -> 5, upside down(5) -> 3, 3 -> 6, upsidedown(6) -> 1
+move a column down: 
+
+*/
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -11,7 +25,7 @@ public class CipherCube {
     private StringBuilder ciphertext = new StringBuilder("");
     private StringBuilder key = new StringBuilder("11301 12412 13113");
     /*
-     for key : column or row (0 or 1), face number (1-6), row index (0-4), 
+     for key : column or row (0 or 1), face number (1-6),  index (0-4), 
      left or right/up or down (0 or 1), number of moves: four moves will reset 
      to original position so use (1,2, or 3)
     
@@ -251,6 +265,18 @@ public class CipherCube {
 
         System.out.println("feature not yet supported");
     }
+    private Character[][] rightRotate(Character[][] a) {
+        
+    }
+    // upside down 
+    private Character[][] flip(Character[][] a) {
+        
+    }
+    // this might not be neccessary not sure yet
+    private Character[][] leftRotate(Character[][] a) {
+        
+    }
+    
 
     /**
      * Accessor and mutator methods plaintext setter method may not be required
