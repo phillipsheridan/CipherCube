@@ -7,10 +7,21 @@ import javafx.stage.Stage;
 
 public class CipherCube {
 
-    private String plaintext;
-    private String ciphertext;
-    private String columnKey;
-    private String rowKey;
+    private StringBuilder plaintext = new StringBuilder("");
+    private StringBuilder ciphertext = new StringBuilder("");
+    //for column key : face number, column index, up or down, (1,2, or 3) 
+    // depends on number of moves, four moves will reset to original position
+    private StringBuilder key = new StringBuilder("11301 12412 13113");
+    /*
+    for key : column or row (0 or 1), face number(1-6), row index(0-4), 
+    left or right (0 or 1), number of moves, four moves will reset 
+    to original position(1,2, or 3)
+    
+    ie: "11301 12412 13113" would mean:
+    "move face 1's fourth row left once, then move face 2's fifth row right twice,
+    then move face 3's second row right three times"
+    */
+   
     private int start = 0;
     private Character[][] square1 = new Character[5][5];
     private Character[][] square2 = new Character[5][5];
@@ -28,18 +39,19 @@ public class CipherCube {
         
 
         if (spec) {
-            this.ciphertext = text;
+            this.ciphertext.append(text);
             this.decipher();
         } else {
-            this.plaintext = text;
-            this.cipher();
+            this.plaintext.append(text);
+            this.cipher(key);
         }
         
         if (text.length() != 150) {
             text = this.pad(text);
-            this.plaintext = text;
+            this.plaintext.append(text);
         }
-        System.out.println(text.length());
+        //test length
+        //System.out.println(text.length());
         for (int i = 0; i < 6; i++) {
 
             switch (i) {
@@ -88,7 +100,7 @@ public class CipherCube {
             }
         }
         // test if squares are filled
-
+/*
         for (int i = 0; i < 5; i++) {
             System.out.println();
             for (int j = 0; j < 5; j++) {
@@ -131,6 +143,7 @@ public class CipherCube {
                 System.out.print(square6[i][j] + " ");
             }
         }
+        */
     }
 
     public static void main(String[] args) throws IOException {
@@ -166,25 +179,15 @@ public class CipherCube {
         return text;
     }
 
-    private void run(boolean spec) throws IOException {
-        File file = new File("test.txt");
-        Scanner input = new Scanner(file);
-        if (file.exists()) {
-            if (spec) {
-                String s = input.next();
-                System.out.print(s);
-            }
+    
 
-        }
-    }
-
-    private void cipher() {
-        this.ciphertext = this.plaintext;
-        System.out.println("feature not yet supported");
+    private void cipher(StringBuilder key) {
+        
+        
     }
 
     private void decipher() {
-        this.plaintext = this.ciphertext;
+        
         System.out.println("feature not yet supported");
     }
 
@@ -192,15 +195,15 @@ public class CipherCube {
      * Accessor and mutator methods plaintext setter method may not be required
      */
     public String getPlaintext() {
-        return this.plaintext;
+        return this.plaintext.toString();
     }
 
     public String getCiphertext() {
-        return this.ciphertext;
+        return this.ciphertext.toString();
     }
 
     public void setPlaintext(String plaintext) {
-        this.plaintext = plaintext;
+        this.plaintext = new StringBuilder(plaintext);
     }
 
 }
