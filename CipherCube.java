@@ -163,7 +163,7 @@ public class CipherCube {
     }
 
     /**
-     * Adjust input text length to 250 characters
+     * Adjust input text length to 150 characters
      */
     private String pad(String text) {
         StringBuilder strBldr = new StringBuilder(text);
