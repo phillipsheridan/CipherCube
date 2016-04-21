@@ -3,15 +3,40 @@
 //notes
 
 /*
-- need right rotate method
-- need upside down method
+- need upside down method (maybe, could just hard code it)
+- need to check for special case when column/row is 0 or 4, the face touching 
+the column or row will be turn accordingly, need pass by reference method to do this
 - mapping:
 Face 1:
 move a row left: 1 -> 4, 4 -> 3, 3 -> 2, 2 -> 1
 move a row right: 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 1
 move a column up: 1 -> 5, upside down(5) -> 3, 3 -> 6, upsidedown(6) -> 1
-move a column down: 
-
+move a column down: upsidedown(1) -> 6, 6 -> 3, upsidedown(3) -> 5, 5 -> 1
+Face 2:
+move a row left: 2 -> 1, 1 -> 4, 4 -> 3, 3 -> 2
+move a row right: 2 -> 3, 3 -> 4, 4 -> 1, 1 -> 2
+move a column up: 2 -> row(5), row(5) -> 4, 4 -> row(6), row(6) -> 2
+move a column down: 2 -> row(6), row(6) -> 4, 4 -> row(5), row(5) -> 2
+Face3:
+move a row left: 3 -> 2, 2 -> 1, 1 -> 4, 4 -> 3
+move a row right: 3 -> 4, 4 -> 1, 1 -> 2, 2 -> 3
+move a column up: upsideDown(3) -> 5, 5 -> 1, 4 -> upsidedown(1) -> 6, 6 -> 3
+move a column down: 3 -> 6, upsidedwn(6) -> 1, 1 -> 5, upsidedown(5) -> 3
+Face4:
+move a row left: 4 -> 3, 3 -> 2, 2 -> 1, 1 -> 4
+move a row right: 4 -> 1, 1 -> 2, 2 -> 3, 3 -> 4
+move a column up: 4 -> row(5), row(5) -> 2, 2 -> row(6), row(6) -> 4
+move a column down: 4 -> row(6), row(6) -> 2, 2 -> row(5), row(5) -> 4
+Face5:
+move a row left: 5 -> col(4), col(4) -> 6, 6 -> col(2), col(2) -> 5
+move a row right: 5 -> col(2), col(2) -> 6, 6 -> col(4), col(4) -> 5
+move a column up: upsidedown(5) -> 3, 3 -> 6, upsidedown(6) -> 1, 1 -> 5
+move a column down: 5 -> 1, upsidedown(1) -> 6, 6 -> 3, upsidedown(3) -> 5
+Face6:
+move a row left: 6 -> col(2), col(2) -> 5, 5 -> col(4), col(4) -> 6 
+move a row right: 6 -> col(4), col(4) -> 5, 5 -> col(2), col(2) -> 6
+move a column up: 6 -> 3, upsidedown(3) -> 5, 5 -> 1, upsidedown(1) -> 6
+move a column down: upsidedown(6) -> 1, 1 -> 5, upsidedown(5) -> 3, 3 -> 6
 */
 import java.io.File;
 import java.io.IOException;
@@ -203,6 +228,7 @@ public class CipherCube {
     }
 
     private void columnSwap(String subKey) {
+        Character[] temp = new Character[5];
           // face can be 1-6
         char face = subKey.charAt(1);
         //index can be 0-4
@@ -214,7 +240,9 @@ public class CipherCube {
 
         switch (face) {
             case '1':
-                // figure out which columns can swap with which
+                temp = square1[index];
+                System.arraycopy(square1, 0, temp, 0, 5);
+                
                 break;
             case '2':
                 break;
@@ -244,7 +272,9 @@ public class CipherCube {
 
         switch (face) {
             case '1':
-                // figure out which columns can swap with which
+                for (int i = 0; i < numberOfMoves; i++) {
+                    
+                }
                 break;
             case '2':
                 break;
