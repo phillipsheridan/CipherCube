@@ -5,40 +5,29 @@
  - need upside down method (maybe, could just hard code it)
  - need to check for special case when column/row is 0 or 4, the face touching 
  the column or row will be turn accordingly, need pass by reference method to do this
- - mapping:
- Face 1:
+ - mapping: only need to map three faces, other three will be the 
+ compliment of their opposite face
+ Face 1/ opposite 3:
  move a row left: 1 -> 4, 4 -> 3, 3 -> 2, 2 -> 1
  move a row right: 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 1
- move a column up: 1 -> 5, upside down(5) -> 3, 3 -> 6, upsidedown(6) -> 1
- move a column down: upsidedown(1) -> 6, 6 -> 3, upsidedown(3) -> 5, 5 -> 1
- Face 2:
+ move a column up: 1 -> row(5), row(5) -> 3, upsidedown(3) -> row(6), row(6) -> 1
+ move a column down: 1 -> row(6), upsidedown(row(6)) -> 3, 3 -> row(5), upsidedown(row(5)) -> 1
+ Face 2/ opposite 4:
  move a row left: 2 -> 1, 1 -> 4, 4 -> 3, 3 -> 2
  move a row right: 2 -> 3, 3 -> 4, 4 -> 1, 1 -> 2
- move a column up: 2 -> row(5), row(5) -> 4, 4 -> row(6), row(6) -> 2
- move a column down: 2 -> row(6), row(6) -> 4, 4 -> row(5), row(5) -> 2
- Face3:
- move a row left: 3 -> 2, 2 -> 1, 1 -> 4, 4 -> 3
- move a row right: 3 -> 4, 4 -> 1, 1 -> 2, 2 -> 3
- move a column up: upsideDown(3) -> 5, 5 -> 1, 4 -> upsidedown(1) -> 6, 6 -> 3
- move a column down: 3 -> 6, upsidedwn(6) -> 1, 1 -> 5, upsidedown(5) -> 3
- Face4:
- move a row left: 4 -> 3, 3 -> 2, 2 -> 1, 1 -> 4
- move a row right: 4 -> 1, 1 -> 2, 2 -> 3, 3 -> 4
- move a column up: 4 -> row(5), row(5) -> 2, 2 -> row(6), row(6) -> 4
- move a column down: 4 -> row(6), row(6) -> 2, 2 -> row(5), row(5) -> 4
- Face5:
- move a row left: 5 -> col(4), col(4) -> 6, 6 -> col(2), col(2) -> 5
- move a row right: 5 -> col(2), col(2) -> 6, 6 -> col(4), col(4) -> 5
- move a column up: upsidedown(5) -> 3, 3 -> 6, upsidedown(6) -> 1, 1 -> 5
- move a column down: 5 -> 1, upsidedown(1) -> 6, 6 -> 3, upsidedown(3) -> 5
- Face6:
- move a row left: 6 -> col(2), col(2) -> 5, 5 -> col(4), col(4) -> 6 
- move a row right: 6 -> col(4), col(4) -> 5, 5 -> col(2), col(2) -> 6
- move a column up: 6 -> 3, upsidedown(3) -> 5, 5 -> 1, upsidedown(1) -> 6
- move a column down: upsidedown(6) -> 1, 1 -> 5, upsidedown(5) -> 3, 3 -> 6
+ move a column up: 2 -> 5, upsidedown(5) -> 4, upsidedown(4) -> 6, 6 -> 2
+ move a column down: 2 -> 6, upsidedown(6) -> 4, upsidedown(4) -> 5, 5 -> 2
+ 
+ Face5/ opposite 6:
+ move a row left: upsidedown5) -> col(1), col(1) -> 6, upsidedown(6) -> col(3), col(3) -> row(5)
+ move a row right: 5 -> col(3), upsidedown(col(3)) -> 6, upsidedown(6) -> col(1), upsidedown(col(1)) -> 5
+ move a column up: upsidedown(5) -> 4, upsidedown(4) -> 6, 6 -> 2, 2 -> 5
+ move a column down: 5 -> 2, 2 -> 6, upsidedown(6) -> 4, upsidedown(4) -> 5
+ 
  */
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -47,9 +36,9 @@ public class CipherCube {
 
     private StringBuilder plaintext = new StringBuilder("");
     private StringBuilder ciphertext = new StringBuilder("");
-    private StringBuilder key = new StringBuilder("01001 01101 01201");
+    private StringBuilder key = new StringBuilder("02303 01002 02101 00103 11111 12111 10111");
     /*
-     for key : column or row (0 or 1), face number (1-6),  index (0-4), 
+     for key : column or row (0 or 1), face number (0-2),  index (0-4), 
      left or right/up or down (0 or 1), number of moves: four moves will reset 
      to original position so use (1,2, or 3)
     
@@ -59,12 +48,14 @@ public class CipherCube {
      */
 
     private int start = 0;
+    private int cubeSize;
     private Character[][] square1 = new Character[5][5];
     private Character[][] square2 = new Character[5][5];
     private Character[][] square3 = new Character[5][5];
     private Character[][] square4 = new Character[5][5];
     private Character[][] square5 = new Character[5][5];
     private Character[][] square6 = new Character[5][5];
+    private Character[][][] cube = {square1, square2, square3, square4, square5, square6};
 
     /**
      * @param text maybe be plaintext or ciphertext
@@ -76,9 +67,15 @@ public class CipherCube {
         if (file.exists()) {
 
             String s = input.nextLine();
-            
 
             CipherCube cube = new CipherCube(s, false);
+            System.out.println("Before cipher:\n");
+            cube.printSquares();
+            cube.cipher(cube.getKey());
+            System.out.println("\nAfter cipher:\n");
+            cube.printSquares();
+            cube.decipher(cube.getKey());
+            System.out.println("\nAfter decipher:\n");
             cube.printSquares();
 
         }
@@ -88,18 +85,19 @@ public class CipherCube {
     public CipherCube(String text, Boolean spec) {
         Character[][] ref;
 
-        if (spec) {
-            this.ciphertext.append(text);
-            this.decipher();
-        } else {
-            this.plaintext.append(text);
-            this.cipher(key);
-        }
-
         if (text.length() != 150) {
             text = this.pad(text);
-            this.plaintext.append(text);
+
         }
+
+        if (spec) {
+            this.ciphertext.append(text);
+
+        } else {
+            this.plaintext.append(text);
+
+        }
+
         //test length
         //System.out.println(text.length());
         for (int i = 0; i < 6; i++) {
@@ -157,42 +155,42 @@ public class CipherCube {
             System.out.println();
             for (int j = 0; j < 5; j++) {
 
-                System.out.print(square1[i][j] + " ");
+                System.out.print(cube[0][i][j] + " ");
             }
         }
         for (int i = 0; i < 5; i++) {
             System.out.println();
             for (int j = 0; j < 5; j++) {
 
-                System.out.print(square2[i][j] + " ");
+                System.out.print(cube[1][i][j] + " ");
             }
         }
         for (int i = 0; i < 5; i++) {
             System.out.println();
             for (int j = 0; j < 5; j++) {
 
-                System.out.print(square3[i][j] + " ");
+                System.out.print(cube[2][i][j] + " ");
             }
         }
         for (int i = 0; i < 5; i++) {
             System.out.println();
             for (int j = 0; j < 5; j++) {
 
-                System.out.print(square4[i][j] + " ");
+                System.out.print(cube[3][i][j] + " ");
             }
         }
         for (int i = 0; i < 5; i++) {
             System.out.println();
             for (int j = 0; j < 5; j++) {
 
-                System.out.print(square5[i][j] + " ");
+                System.out.print(cube[4][i][j] + " ");
             }
         }
         for (int i = 0; i < 5; i++) {
             System.out.println();
             for (int j = 0; j < 5; j++) {
 
-                System.out.print(square6[i][j] + " ");
+                System.out.print(cube[5][i][j] + " ");
             }
         }
     }
@@ -214,132 +212,298 @@ public class CipherCube {
         return text;
     }
 
-    private void cipher(StringBuilder key) {
-        String[] arr = key.toString().split(" ");
+    private void cipher(String key) {
+        String[] arr = key.split(" ");
         for (String e : arr) {
-            if (e.charAt(0) == 0) {
-                columnSwap(e);
-            } else if (e.charAt(0) == 1) {
-                rowSwap(e);
+            if (e.charAt(0) == '0') {
+                columnSwapE(e);
+            } else if (e.charAt(0) == '1') {
+                rowSwapE(e);
             }
         }
 
     }
 
-    private void columnSwap(String subKey) {
+    private void decipher(String key) {
+
+        String[] arr = key.split(" ");
+        //reverse array
+        String[] temp = new String[arr.length];
+        int k = 0;
+        for (int i = arr.length - 1; i >= 0; i--) {
+            temp[k] = arr[i];
+            k++;
+        }
+        for (String e : temp) {
+            if (e.charAt(0) == '0') {
+                columnSwapD(e);
+            } else if (e.charAt(0) == '1') {
+                rowSwapD(e);
+            }
+        }
+
+    }
+
+    private void columnSwapE(String subKey) {
         Character[] temp = new Character[5];
-        // face can be 1-6
+        // face can be 0-2
         char face = subKey.charAt(1);
         //index can be 0-4
-        char index = subKey.charAt(2);
+        int index = Integer.parseInt(Character.toString(subKey.charAt(2)));
         //direction can be up or down (0 or 1)
         char direction = subKey.charAt(3);
         //numberOfMoves can be 1-3
         char numberOfMoves = subKey.charAt(4);
 
         switch (face) {
-            case '1':
+            case '0':
                 //j is for quick reversing arrays
                 if (direction == '0') {
+                    // direction is up
                     int j = 4;
                     //main loop
                     for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        //reinitialize j
+                        j = 4;
 
                         for (int i = 0; i < 5; i++) {
-                            temp[i] = square1[index][i];
+                            //get 1 column
+                            temp[i] = cube[0][i][index];
                         }
+                        
+                        // row(6) -> 1
+                        for (int i = 0; i < 5; i++) {
+                            cube[0][i][index] = cube[5][index][i];
+
+                        }
+                        // upsidedown(3) -> row(6)
 
                         for (int i = 0; i < 5; i++) {
-                            square1[index][i] = square6[index][j];
+                            cube[5][index][i] = cube[2][j][index];
                             j--;
                         }
                         //reset j
                         j = 4;
+                        // row(5) -> 3
                         for (int i = 0; i < 5; i++) {
-                            square6[index][i] = square3[index][i];
+                            cube[2][i][index] = cube[4][index][i];
+
                         }
+                        // upsidedown(1) -> row(5)
                         for (int i = 0; i < 5; i++) {
-                            square3[index][i] = square5[index][j];
+                            cube[4][index][i] = temp[j];
                             j--;
-                        }
-                        for (int i = 0; i < 5; i++) {
-                            square5[index][i] = temp[i];
                         }
 
                     }
                 } else {
-                    // direction is 
+                    // direction is down
                     int j = 4;
                     //main loop
                     for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
 
                         for (int i = 0; i < 5; i++) {
-                            temp[i] = square1[index][j];
-                            j--;
-                        }
-                        //reset j
-                        j = 4;
-
-                        for (int i = 0; i < 5; i++) {
-                            square1[index][i] = square5[index][i];
-
+                            // get 1 column
+                            temp[i] = cube[0][i][i];
                         }
 
                         for (int i = 0; i < 5; i++) {
-                            square5[index][i] = square3[index][j];
+                            // upsidedown(row(5)) -> 1
+                            cube[0][i][index] = cube[5][index][j];
                             j--;
+
                         }
                         //reset j
                         j = 4;
                         for (int i = 0; i < 5; i++) {
-                            square3[index][i] = square6[index][i];
+                            //3 -> row(5)
+                            cube[4][index][i] = cube[2][i][index];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(row(6)) -> 3
+                            cube[2][i][index] = cube[5][index][j];
+                            j--;
 
                         }
+                        //reset j
+                        j = 4;
                         for (int i = 0; i < 5; i++) {
-                            square6[index][i] = temp[i];
+                            // 1 -> row(6)
+                            cube[5][index][i] = temp[i];
                         }
 
                     }
+                }
+
+                break;
+            case '1':
+                //j is for quick reversing arrays
+                int j = 4;
+                //main loop
+                //up
+                if (direction == '0') {
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get square2 column
+                            temp[i] = cube[1][i][index];
+                        }
+                        
+                        // 6 -> 2
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][i][index] = cube[5][i][index];
+
+                        }
+                        // upsidedown(4) -> 6
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][i][index] = cube[3][j][index];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        // upsidedown(5) -> 4
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][i][index] = cube[4][j][index];
+                            j--;
+
+                        }
+                        //reset j
+                        j = 4;
+                        // 2 -> 5
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][i][index] = temp[i];
+                        }
+
+                    }
+                } else 
+                    //down
+                {
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get square2 column
+                            temp[i] = cube[1][i][index];
+                        }
+                        
+                        // 5 -> 2
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][i][index] = cube[4][i][index];
+
+                        }
+                        // upsidedown(4) -> 5
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][i][index] = cube[3][j][index];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        // upsidedown(6) -> 4
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][i][index] = cube[5][j][index];
+                            j--;
+
+                        }
+                        //reset j
+                        j = 4;
+                        // 2 -> 6
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][i][index] = temp[i];
+                        }
+
+                    }
+
                 }
 
                 break;
             case '2':
-                //j is for quick reversing arrays
-                int j = 4;
+               //j is for quick reversing arrays
+                j = 4;
                 //main loop
-                for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                //up
+                if (direction == '0') {
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
 
-                    for (int i = 0; i < 5; i++) {
-                        temp[i] = square1[index][i];
-                    }
+                        for (int i = 0; i < 5; i++) {
+                            //get square5 column
+                            temp[i] = cube[4][i][index];
+                        }
+                        
+                        // 2 -> 5
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][i][index] = cube[1][i][index];
 
-                    for (int i = 0; i < 5; i++) {
-                        square1[index][i] = square6[index][j];
-                        j--;
+                        }
+                        // 6 -> 2
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][i][index] = cube[5][i][index];
+                            
+                        }
+                        
+                        // upsidedown(4) -> 6
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][i][index] = cube[3][i][index];
+                            
+
+                        }
+                        //reset j
+                        j = 4;
+                        // upsidedown(5) -> 4
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][i][index] = temp[i];
+                            
+                        }
+
                     }
-                    //reset j
-                    j = 4;
-                    for (int i = 0; i < 5; i++) {
-                        square6[index][i] = square3[index][i];
-                    }
-                    for (int i = 0; i < 5; i++) {
-                        square3[index][i] = square5[index][j];
-                        j--;
-                    }
-                    for (int i = 0; i < 5; i++) {
-                        square5[index][i] = temp[i];
+                } else 
+                    //down
+                {
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get square5 column
+                            temp[i] = cube[4][i][index];
+                        }
+                        
+                        // upsidedown(4) -> 5
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][i][index] = cube[3][j][index];
+                            j--;
+
+                        }
+                        j = 4;
+                        // upsidedown(6) -> 4
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][i][index] = cube[5][j][index];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        // 2 -> 6
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][i][index] = cube[1][j][index];
+                            j--;
+
+                        }
+                        //reset j
+                        j = 4;
+                        // 5 -> 2
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][i][index] = temp[i];
+                        }
+
                     }
 
                 }
 
-                break;
-            case '3':
-                break;
-            case '4':
-                break;
-            case '5':
-                break;
-            case '6':
                 break;
             default:
                 System.exit(1);
@@ -347,56 +511,753 @@ public class CipherCube {
         }
     }
 
-    private void rowSwap(String subKey) {
-        // face can be 1-6 
+    private void columnSwapD(String subKey) {
+        Character[] temp = new Character[5];
+        // face can be 0-2
         char face = subKey.charAt(1);
         //index can be 0-4
-        char index = subKey.charAt(2);
+        int index = Integer.parseInt(Character.toString(subKey.charAt(2)));
+        //direction can be down or up (0 or 1)
+        char direction = subKey.charAt(3);
+        //numberOfMoves can be 1-3
+        char numberOfMoves = subKey.charAt(4);
+
+        //switch direction
+        if (direction == '0') {
+            direction = '1';
+        } else {
+            direction = '0';
+        }
+
+        switch (face) {
+            case '0':
+                //j is for quick reversing arrays
+                if (direction == '0') {
+                    // direction is still up
+                    int j = 4;
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                       for (int i = 0; i < 5; i++) {
+                            //get 1 column
+                            temp[i] = cube[0][i][index];
+                        }
+                        
+                        // row(6) -> 1
+                        for (int i = 0; i < 5; i++) {
+                            cube[0][i][index] = cube[5][index][i];
+
+                        }
+                        // upsidedown(3) -> row(6)
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][index][i] = cube[2][j][index];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        // row(5) -> 3
+                        for (int i = 0; i < 5; i++) {
+                            cube[2][i][index] = cube[4][index][i];
+
+                        }
+                        // upsidedown(1) -> row(5)
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][index][i] = temp[j];
+                            j--;
+                        }
+
+                    }
+                } else {
+                    // direction is down
+                    int j = 4;
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            // get 1 column
+                            temp[i] = cube[0][i][index];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(row(5)) -> 1
+                            cube[0][i][index] = cube[4][index][j];
+                            j--;
+
+                        }
+                        //reset j
+                        j = 4;
+                        for (int i = 0; i < 5; i++) {
+                            //3 -> row(5)
+                            cube[4][index][i] = cube[2][i][index];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(row(6)) -> 3
+                            cube[2][i][index] = cube[5][index][j];
+                            j--;
+
+                        }
+                        //reset j
+                        j = 4;
+                        for (int i = 0; i < 5; i++) {
+                            // 1 -> row(6)
+                            cube[5][index][i] = temp[i];
+                        }
+
+                    }
+                }
+
+                break;
+            case '1':
+                 //j is for quick reversing arrays
+                int j = 4;
+                //main loop
+                //up
+                if (direction == '0') {
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get square2 column
+                            temp[i] = cube[1][i][index];
+                        }
+                        
+                        // 6 -> 2
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][i][index] = cube[5][i][index];
+
+                        }
+                        // upsidedown(4) -> 6
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][i][index] = cube[3][j][index];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        // upsidedown(5) -> 4
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][i][index] = cube[4][j][index];
+                            j--;
+
+                        }
+                        //reset j
+                        j = 4;
+                        // 2 -> 5
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][i][index] = temp[i];
+                        }
+
+                    }
+                } else 
+                    //down
+                {
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get square2 column
+                            temp[i] = cube[1][i][index];
+                        }
+                        
+                        // 5 -> 2
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][i][index] = cube[4][i][index];
+
+                        }
+                        // upsidedown(4) -> 5
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][i][index] = cube[3][j][index];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        // upsidedown(6) -> 4
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][i][index] = cube[5][j][index];
+                            j--;
+
+                        }
+                        //reset j
+                        j = 4;
+                        // 2 -> 6
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][i][index] = temp[i];
+                        }
+
+                    }
+
+                }
+
+                break;
+                
+                
+            case '2'://j is for quick reversing arrays
+                j = 4;
+                //main loop
+                //up
+                if (direction == '0') {
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get square5 column
+                            temp[i] = cube[4][i][index];
+                        }
+                        
+                        // 2 -> 5
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][i][index] = cube[1][i][index];
+
+                        }
+                        // 6 -> 2
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][i][index] = cube[5][i][index];
+                            
+                        }
+                        
+                        // upsidedown(4) -> 6
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][i][index] = cube[3][j][index];
+                            j--;
+
+                        }
+                        //reset j
+                        j = 4;
+                        // upsidedown(5) -> 4
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][i][index] = temp[j];
+                            j--;
+                        }
+
+                    }
+                } else 
+                    //down
+                {
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get square5 column
+                            temp[i] = cube[4][i][index];
+                        }
+                        
+                        // upsidedown(4) -> 5
+                        for (int i = 0; i < 5; i++) {
+                            cube[4][i][index] = cube[3][j][index];
+                            j--;
+
+                        }
+                        j = 4;
+                        // upsidedown(6) -> 4
+
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][i][index] = cube[5][j][index];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        // 2 -> 6
+                        for (int i = 0; i < 5; i++) {
+                            cube[5][i][index] = cube[1][i][index];
+                            
+
+                        }
+                        //reset j
+                        
+                        // 5 -> 2
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][i][index] = temp[i];
+                        }
+
+                    }
+
+                }
+
+                break;
+            default:
+                System.exit(1);
+
+        }
+    }
+
+    private void rowSwapE(String subKey) {
+        Character[] temp = new Character[5];
+        // face can be 0-2 
+        char face = subKey.charAt(1);
+        //index can be 0-4
+        int index = Integer.parseInt(Character.toString(subKey.charAt(2)));
         //direction can be left or right (0 or 1)
         char direction = subKey.charAt(3);
         //numberOfMoves can be 1-3
         char numberOfMoves = subKey.charAt(4);
 
         switch (face) {
-            case '1':
-                for (int i = 0; i < numberOfMoves; i++) {
+            case '0': //left
+                
+                if (direction == '0') {
+                    
+
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        
+
+                        for (int i = 0; i < 5; i++) {
+                            //get a row
+                            
+                            temp[i] = cube[0][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 2 -> 1
+                            cube[0][index][i] = cube[1][index][i];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 3 -> 2
+                            cube[1][index][i] = cube[2][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // 4 -> 3
+                            cube[2][index][i] = cube[3][index][i];
+
+                        }
+                        //1 -> 4
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][index][i] = temp[i];
+                        }
+
+                    }
+                } else {
+                    //right
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            //get a row
+                            temp[i] = cube[0][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 4 -> 1
+                            cube[0][index][i] = cube[3][index][i];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 3 -> 4
+                            cube[3][index][i] = cube[2][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // 2 -> 3
+                            cube[2][index][i] = cube[1][index][i];
+
+                        }
+                        //1 -> 2
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][index][i] = temp[i];
+                        }
+
+                    }
 
                 }
+
+                break;
+            case '1':
+                if (direction == '0') {
+                    //left
+                    
+
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        
+
+                        for (int i = 0; i < 5; i++) {
+                            //get row 2
+                            
+                            temp[i] = cube[1][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 3 -> 2
+                            cube[1][index][i] = cube[2][index][i];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 4 -> 3
+                            cube[2][index][i] = cube[3][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // 1 -> 4
+                            cube[3][index][i] = cube[0][index][i];
+
+                        }
+                        //2 -> 1
+                        for (int i = 0; i < 5; i++) {
+                            cube[0][index][i] = temp[i];
+                        }
+
+                    }
+                } else {
+                    //right
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            //get row 2
+                            temp[i] = cube[1][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 1 -> 2 
+                            cube[1][index][i] = cube[0][index][i];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 4 -> 1
+                            cube[0][index][i] = cube[3][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // 3 -> 4
+                            cube[3][index][i] = cube[2][index][i];
+
+                        }
+                        //2 -> 3
+                        for (int i = 0; i < 5; i++) {
+                            cube[2][index][i] = temp[i];
+                        }
+
+                    }
+
+                }
+
                 break;
             case '2':
-                break;
-            case '3':
-                break;
-            case '4':
-                break;
-            case '5':
-                break;
-            case '6':
+                int j = 4;
+                if (direction == '0') {
+                    //left
+                    
+
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get row 5
+                            
+                            temp[i] = cube[4][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // col(3) -> row(5)
+                            cube[4][index][i] = cube[2][i][index];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(6) -> col(3)
+                            cube[2][i][index] = cube[5][index][j];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        for (int i = 0; i < 5; i++) {
+                            // col(1) -> 6
+                            cube[5][index][i] = cube[0][i][index];
+
+                        }
+                        //upsidedown(5) -> col(1)
+                        for (int i = 0; i < 5; i++) {
+                            cube[0][i][index] = temp[j];
+                            j--;
+                        }
+
+                    }
+                } else {
+                    //right
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            //get row 5
+                            temp[i] = cube[4][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(col(1)) -> 5
+                            cube[4][index][i] = cube[0][j][index];
+                            j--;
+
+                        }
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            // 6 -> col(1)
+                            cube[0][i][index] = cube[5][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(col(3)) -> 6
+                            cube[5][index][i] = cube[2][j][index];
+                            j--;
+
+                        }
+                        j = 4;
+                        //5 -> col(3)
+                        for (int i = 0; i < 5; i++) {
+                            cube[2][i][index] = temp[i];
+                        }
+
+                    }
+
+                }
+
                 break;
             default:
                 System.exit(1);
         }
     }
 
-    private void decipher() {
+    private void rowSwapD(String subKey) {
+        Character[] temp = new Character[5];
+        // face can be 0-2 
+        char face = subKey.charAt(1);
+        //index can be 0-4
+        int index = Integer.parseInt(Character.toString(subKey.charAt(2)));
+        //direction can be left or right (0 or 1)
+        char direction = subKey.charAt(3);
+        //numberOfMoves can be 1-3
+        char numberOfMoves = subKey.charAt(4);
 
-        System.out.println("feature not yet supported");
-    }
+        //switch direction
+        if (direction == '0') {
+            direction = '1';
+        } else {
+            direction = '0';
+        }
 
-    private Character[][] rightRotate(Character[][] a) {
-        return a;
-    }
+        switch (face) {
+            case '0':
 
-    // upside down 
+                if (direction == '0') {
+                    //right
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
 
-    private Character[][] flip(Character[][] a) {
-        return a;
-    }
+                        for (int i = 0; i < 5; i++) {
+                            //get a row
+                            
+                            temp[i] = cube[0][index][i];
+                        }
 
-    // this might not be neccessary not sure yet
+                        for (int i = 0; i < 5; i++) {
+                            // 2 -> 1
+                            cube[0][index][i] = cube[1][index][i];
 
-    private Character[][] leftRotate(Character[][] a) {
-        return a;
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 3 -> 2
+                            cube[1][index][i] = cube[2][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // 4 -> 3
+                            cube[2][index][i] = cube[3][index][i];
+
+                        }
+                        //1 -> 4
+                        for (int i = 0; i < 5; i++) {
+                            cube[3][index][i] = temp[i];
+                        }
+
+
+                    }
+                } else {
+                    //left
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            //get a row
+                            temp[i] = cube[0][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 4 -> 1
+                            cube[0][index][i] = cube[3][index][i];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 3 -> 4
+                            cube[3][index][i] = cube[2][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // 2 -> 3
+                            cube[2][index][i] = cube[1][index][i];
+
+                        }
+                        //1 -> 2
+                        for (int i = 0; i < 5; i++) {
+                            cube[1][index][i] = temp[i];
+                        }
+
+                    }
+
+                }
+                break;
+            case '1':if (direction == '0') {
+                    //left
+                    
+
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        
+
+                        for (int i = 0; i < 5; i++) {
+                            //get row 2
+                            
+                            temp[i] = cube[1][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 3 -> 2
+                            cube[1][index][i] = cube[2][index][i];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 4 -> 3
+                            cube[2][index][i] = cube[3][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // 1 -> 4
+                            cube[3][index][i] = cube[0][index][i];
+
+                        }
+                        //2 -> 1
+                        for (int i = 0; i < 5; i++) {
+                            cube[0][index][i] = temp[i];
+                        }
+
+                    }
+                } else {
+                    //right
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            //get row 2
+                            temp[i] = cube[1][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 1 -> 2 
+                            cube[1][index][i] = cube[0][index][i];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // 4 -> 1
+                            cube[0][index][i] = cube[3][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // 3 -> 4
+                            cube[3][index][i] = cube[2][index][i];
+
+                        }
+                        //2 -> 3
+                        for (int i = 0; i < 5; i++) {
+                            cube[2][index][i] = temp[i];
+                        }
+
+                    }
+
+                }
+
+                break;
+            case '2':int j = 4;
+                if (direction == '0') {
+                    //left
+                    
+
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            //get row 5
+                            
+                            temp[i] = cube[4][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // col(3) -> row(5)
+                            cube[4][index][i] = cube[2][i][index];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(6) -> col(3)
+                            cube[2][i][index] = cube[5][index][j];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        for (int i = 0; i < 5; i++) {
+                            // col(1) -> 6
+                            cube[5][index][i] = cube[0][i][index];
+
+                        }
+                        //upsidedown(5) -> col(1)
+                        for (int i = 0; i < 5; i++) {
+                            cube[0][i][index] = temp[j];
+                            j--;
+                        }
+
+                    }
+                } else {
+                    //right
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            //get row 5
+                            temp[i] = cube[4][index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(col(1)) -> 5
+                            cube[4][index][i] = cube[0][j][index];
+                            j--;
+
+                        }
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            // 6 -> col(1)
+                            cube[0][i][index] = cube[5][index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            // upsidedown(col(3)) -> 6
+                            cube[5][index][i] = cube[2][j][index];
+                            j--;
+
+                        }
+                        j = 4;
+                        //5 -> col(3)
+                        for (int i = 0; i < 5; i++) {
+                            cube[2][i][index] = temp[i];
+                        }
+
+                    }
+
+                }
+
+                break;
+            default:
+                System.exit(1);
+        }
     }
 
     /**
@@ -410,8 +1271,16 @@ public class CipherCube {
         return this.ciphertext.toString();
     }
 
+    public String getKey() {
+        return this.key.toString();
+    }
+
     public void setPlaintext(String plaintext) {
         this.plaintext = new StringBuilder(plaintext);
+    }
+
+    public void setCiphertext(String plaintext) {
+        this.ciphertext = new StringBuilder(plaintext);
     }
 
 }
