@@ -1,0 +1,86 @@
+private Character[][] rightRotate(Character[][] a) {
+        
+        int tot = a.length - 1;
+        
+        Character[][] transformation = new Character[a.length][a[0].length];
+        
+        // For right shift
+        for(int i = 0; i < tot; i++) {
+            for(int j = 0; i < tot; j++) {
+                transformation[j][tot-i] = a[i][j];
+            }
+        }
+        
+        // Now we have to account for shifting on neighboring faces
+        
+        return transformation;
+    }
+
+
+// this might not be neccessary not sure yet
+    private Character[][] leftRotate(Character[][] a) {
+        int tot = a.length - 1;
+        
+        Character[][] transformation = new Character[a.length][a[0].length];
+        
+        // For right shift
+        for(int i = 0; i < tot; i++) {
+            for(int j = 0; i < tot; j++) {
+                transformation[tot-j][i] = a[i][j];
+            }
+        }
+        
+        // Now we have to account for shifting on neighboring faces
+        
+        return transformation;
+    }// this might not be neccessary not sure yet
+    private Character[][] leftRotate(Character[][] a) {
+        int tot = a.length - 1;
+        
+        Character[][] transformation = new Character[a.length][a[0].length];
+        
+        // For right shift
+        for(int i = 0; i < tot; i++) {
+            for(int j = 0; i < tot; j++) {
+                transformation[tot-j][i] = a[i][j];
+            }
+        }
+        
+        // Now we have to account for shifting on neighboring faces
+        
+        return transformation;
+    }
+
+
+
+
+
+---------------------------------------------------------------
+finished rotate function
+
+
+private Character[][] rotate(Character[][] a, Boolean direction) {
+        
+        int tot = a.length - 1;
+
+        Character[][] transformation = new Character[a.length][a[0].length];
+
+        // For right shift
+        for (int i = 0; i < tot; i++) {
+            for (int j = 0; i < tot; j++) {
+                // Rotate right if direction is true
+                if(direction) {
+                    transformation[j][tot-i] = a[i][j];
+                }
+                // Rotate left if direction is false
+                else {
+                    transformation[tot-j][i] = a[i][j];
+                }
+                
+            }
+        }
+
+        // Now we have to account for shifting on neighboring faces
+        return transformation;
+        
+    }
