@@ -1,43 +1,42 @@
 
-
 //notes
 
 /*
-- need upside down method (maybe, could just hard code it)
-- need to check for special case when column/row is 0 or 4, the face touching 
-the column or row will be turn accordingly, need pass by reference method to do this
-- mapping:
-Face 1:
-move a row left: 1 -> 4, 4 -> 3, 3 -> 2, 2 -> 1
-move a row right: 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 1
-move a column up: 1 -> 5, upside down(5) -> 3, 3 -> 6, upsidedown(6) -> 1
-move a column down: upsidedown(1) -> 6, 6 -> 3, upsidedown(3) -> 5, 5 -> 1
-Face 2:
-move a row left: 2 -> 1, 1 -> 4, 4 -> 3, 3 -> 2
-move a row right: 2 -> 3, 3 -> 4, 4 -> 1, 1 -> 2
-move a column up: 2 -> row(5), row(5) -> 4, 4 -> row(6), row(6) -> 2
-move a column down: 2 -> row(6), row(6) -> 4, 4 -> row(5), row(5) -> 2
-Face3:
-move a row left: 3 -> 2, 2 -> 1, 1 -> 4, 4 -> 3
-move a row right: 3 -> 4, 4 -> 1, 1 -> 2, 2 -> 3
-move a column up: upsideDown(3) -> 5, 5 -> 1, 4 -> upsidedown(1) -> 6, 6 -> 3
-move a column down: 3 -> 6, upsidedwn(6) -> 1, 1 -> 5, upsidedown(5) -> 3
-Face4:
-move a row left: 4 -> 3, 3 -> 2, 2 -> 1, 1 -> 4
-move a row right: 4 -> 1, 1 -> 2, 2 -> 3, 3 -> 4
-move a column up: 4 -> row(5), row(5) -> 2, 2 -> row(6), row(6) -> 4
-move a column down: 4 -> row(6), row(6) -> 2, 2 -> row(5), row(5) -> 4
-Face5:
-move a row left: 5 -> col(4), col(4) -> 6, 6 -> col(2), col(2) -> 5
-move a row right: 5 -> col(2), col(2) -> 6, 6 -> col(4), col(4) -> 5
-move a column up: upsidedown(5) -> 3, 3 -> 6, upsidedown(6) -> 1, 1 -> 5
-move a column down: 5 -> 1, upsidedown(1) -> 6, 6 -> 3, upsidedown(3) -> 5
-Face6:
-move a row left: 6 -> col(2), col(2) -> 5, 5 -> col(4), col(4) -> 6 
-move a row right: 6 -> col(4), col(4) -> 5, 5 -> col(2), col(2) -> 6
-move a column up: 6 -> 3, upsidedown(3) -> 5, 5 -> 1, upsidedown(1) -> 6
-move a column down: upsidedown(6) -> 1, 1 -> 5, upsidedown(5) -> 3, 3 -> 6
-*/
+ - need upside down method (maybe, could just hard code it)
+ - need to check for special case when column/row is 0 or 4, the face touching 
+ the column or row will be turn accordingly, need pass by reference method to do this
+ - mapping:
+ Face 1:
+ move a row left: 1 -> 4, 4 -> 3, 3 -> 2, 2 -> 1
+ move a row right: 1 -> 2, 2 -> 3, 3 -> 4, 4 -> 1
+ move a column up: 1 -> 5, upside down(5) -> 3, 3 -> 6, upsidedown(6) -> 1
+ move a column down: upsidedown(1) -> 6, 6 -> 3, upsidedown(3) -> 5, 5 -> 1
+ Face 2:
+ move a row left: 2 -> 1, 1 -> 4, 4 -> 3, 3 -> 2
+ move a row right: 2 -> 3, 3 -> 4, 4 -> 1, 1 -> 2
+ move a column up: 2 -> row(5), row(5) -> 4, 4 -> row(6), row(6) -> 2
+ move a column down: 2 -> row(6), row(6) -> 4, 4 -> row(5), row(5) -> 2
+ Face3:
+ move a row left: 3 -> 2, 2 -> 1, 1 -> 4, 4 -> 3
+ move a row right: 3 -> 4, 4 -> 1, 1 -> 2, 2 -> 3
+ move a column up: upsideDown(3) -> 5, 5 -> 1, 4 -> upsidedown(1) -> 6, 6 -> 3
+ move a column down: 3 -> 6, upsidedwn(6) -> 1, 1 -> 5, upsidedown(5) -> 3
+ Face4:
+ move a row left: 4 -> 3, 3 -> 2, 2 -> 1, 1 -> 4
+ move a row right: 4 -> 1, 1 -> 2, 2 -> 3, 3 -> 4
+ move a column up: 4 -> row(5), row(5) -> 2, 2 -> row(6), row(6) -> 4
+ move a column down: 4 -> row(6), row(6) -> 2, 2 -> row(5), row(5) -> 4
+ Face5:
+ move a row left: 5 -> col(4), col(4) -> 6, 6 -> col(2), col(2) -> 5
+ move a row right: 5 -> col(2), col(2) -> 6, 6 -> col(4), col(4) -> 5
+ move a column up: upsidedown(5) -> 3, 3 -> 6, upsidedown(6) -> 1, 1 -> 5
+ move a column down: 5 -> 1, upsidedown(1) -> 6, 6 -> 3, upsidedown(3) -> 5
+ Face6:
+ move a row left: 6 -> col(2), col(2) -> 5, 5 -> col(4), col(4) -> 6 
+ move a row right: 6 -> col(4), col(4) -> 5, 5 -> col(2), col(2) -> 6
+ move a column up: 6 -> 3, upsidedown(3) -> 5, 5 -> 1, upsidedown(1) -> 6
+ move a column down: upsidedown(6) -> 1, 1 -> 5, upsidedown(5) -> 3, 3 -> 6
+ */
 import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
@@ -48,7 +47,7 @@ public class CipherCube {
 
     private StringBuilder plaintext = new StringBuilder("");
     private StringBuilder ciphertext = new StringBuilder("");
-    private StringBuilder key = new StringBuilder("11301 12412 13113");
+    private StringBuilder key = new StringBuilder("01001 01101 01201");
     /*
      for key : column or row (0 or 1), face number (1-6),  index (0-4), 
      left or right/up or down (0 or 1), number of moves: four moves will reset 
@@ -71,6 +70,21 @@ public class CipherCube {
      * @param text maybe be plaintext or ciphertext
      * @param spec specifies plaintext (0) or ciphertext(1),
      */
+    public static void main(String[] args) throws IOException {
+        File file = new File("/Users/phillip/NetBeansProjects/phillip/build/classes/test.txt");
+        Scanner input = new Scanner(file);
+        if (file.exists()) {
+
+            String s = input.nextLine();
+            
+
+            CipherCube cube = new CipherCube(s, false);
+            cube.printSquares();
+
+        }
+
+    }
+
     public CipherCube(String text, Boolean spec) {
         Character[][] ref;
 
@@ -135,67 +149,52 @@ public class CipherCube {
 
             }
         }
-        // test if squares are filled
-/*
-         for (int i = 0; i < 5; i++) {
-         System.out.println();
-         for (int j = 0; j < 5; j++) {
 
-         System.out.print(square1[i][j] + " ");
-         }
-         }
-         for (int i = 0; i < 5; i++) {
-         System.out.println();
-         for (int j = 0; j < 5; j++) {
-
-         System.out.print(square2[i][j] + " ");
-         }
-         }
-         for (int i = 0; i < 5; i++) {
-         System.out.println();
-         for (int j = 0; j < 5; j++) {
-
-         System.out.print(square3[i][j] + " ");
-         }
-         }
-         for (int i = 0; i < 5; i++) {
-         System.out.println();
-         for (int j = 0; j < 5; j++) {
-
-         System.out.print(square4[i][j] + " ");
-         }
-         }
-         for (int i = 0; i < 5; i++) {
-         System.out.println();
-         for (int j = 0; j < 5; j++) {
-
-         System.out.print(square5[i][j] + " ");
-         }
-         }
-         for (int i = 0; i < 5; i++) {
-         System.out.println();
-         for (int j = 0; j < 5; j++) {
-
-         System.out.print(square6[i][j] + " ");
-         }
-         }
-         */
     }
 
-    public static void main(String[] args) throws IOException {
-        File file = new File("/Users/phillip/NetBeansProjects/phillip/build/classes/test.txt");
-        Scanner input = new Scanner(file);
-        if (file.exists()) {
+    public void printSquares() {
+        for (int i = 0; i < 5; i++) {
+            System.out.println();
+            for (int j = 0; j < 5; j++) {
 
-            String s = input.nextLine();
-            //for testing
-            //System.out.print(s);
-            CipherCube cube = new CipherCube(s, false);
-
-            //testing
-            // System.out.println(cube.plaintext);
+                System.out.print(square1[i][j] + " ");
+            }
         }
+        for (int i = 0; i < 5; i++) {
+            System.out.println();
+            for (int j = 0; j < 5; j++) {
 
+                System.out.print(square2[i][j] + " ");
+            }
+        }
+        for (int i = 0; i < 5; i++) {
+            System.out.println();
+            for (int j = 0; j < 5; j++) {
+
+                System.out.print(square3[i][j] + " ");
+            }
+        }
+        for (int i = 0; i < 5; i++) {
+            System.out.println();
+            for (int j = 0; j < 5; j++) {
+
+                System.out.print(square4[i][j] + " ");
+            }
+        }
+        for (int i = 0; i < 5; i++) {
+            System.out.println();
+            for (int j = 0; j < 5; j++) {
+
+                System.out.print(square5[i][j] + " ");
+            }
+        }
+        for (int i = 0; i < 5; i++) {
+            System.out.println();
+            for (int j = 0; j < 5; j++) {
+
+                System.out.print(square6[i][j] + " ");
+            }
+        }
     }
 
     /**
@@ -229,7 +228,7 @@ public class CipherCube {
 
     private void columnSwap(String subKey) {
         Character[] temp = new Character[5];
-          // face can be 1-6
+        // face can be 1-6
         char face = subKey.charAt(1);
         //index can be 0-4
         char index = subKey.charAt(2);
@@ -240,11 +239,99 @@ public class CipherCube {
 
         switch (face) {
             case '1':
-                temp = square1[index];
-                System.arraycopy(square1, 0, temp, 0, 5);
-                
+                //j is for quick reversing arrays
+                if (direction == '0') {
+                    int j = 4;
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            temp[i] = square1[index][i];
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            square1[index][i] = square6[index][j];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        for (int i = 0; i < 5; i++) {
+                            square6[index][i] = square3[index][i];
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            square3[index][i] = square5[index][j];
+                            j--;
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            square5[index][i] = temp[i];
+                        }
+
+                    }
+                } else {
+                    // direction is 
+                    int j = 4;
+                    //main loop
+                    for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                        for (int i = 0; i < 5; i++) {
+                            temp[i] = square1[index][j];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+
+                        for (int i = 0; i < 5; i++) {
+                            square1[index][i] = square5[index][i];
+
+                        }
+
+                        for (int i = 0; i < 5; i++) {
+                            square5[index][i] = square3[index][j];
+                            j--;
+                        }
+                        //reset j
+                        j = 4;
+                        for (int i = 0; i < 5; i++) {
+                            square3[index][i] = square6[index][i];
+
+                        }
+                        for (int i = 0; i < 5; i++) {
+                            square6[index][i] = temp[i];
+                        }
+
+                    }
+                }
+
                 break;
             case '2':
+                //j is for quick reversing arrays
+                int j = 4;
+                //main loop
+                for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
+
+                    for (int i = 0; i < 5; i++) {
+                        temp[i] = square1[index][i];
+                    }
+
+                    for (int i = 0; i < 5; i++) {
+                        square1[index][i] = square6[index][j];
+                        j--;
+                    }
+                    //reset j
+                    j = 4;
+                    for (int i = 0; i < 5; i++) {
+                        square6[index][i] = square3[index][i];
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        square3[index][i] = square5[index][j];
+                        j--;
+                    }
+                    for (int i = 0; i < 5; i++) {
+                        square5[index][i] = temp[i];
+                    }
+
+                }
+
                 break;
             case '3':
                 break;
@@ -273,7 +360,7 @@ public class CipherCube {
         switch (face) {
             case '1':
                 for (int i = 0; i < numberOfMoves; i++) {
-                    
+
                 }
                 break;
             case '2':
@@ -295,18 +382,22 @@ public class CipherCube {
 
         System.out.println("feature not yet supported");
     }
+
     private Character[][] rightRotate(Character[][] a) {
-        
+        return a;
     }
+
     // upside down 
+
     private Character[][] flip(Character[][] a) {
-        
+        return a;
     }
+
     // this might not be neccessary not sure yet
+
     private Character[][] leftRotate(Character[][] a) {
-        
+        return a;
     }
-    
 
     /**
      * Accessor and mutator methods plaintext setter method may not be required
