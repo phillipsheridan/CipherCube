@@ -54,7 +54,7 @@ public class CipherCube {
      * }
      */
     public CipherCube(String text, Boolean spec) {
-        Character[][] ref;
+        
 
         if (text.length() != 150) {
             text = this.pad(text);
@@ -66,6 +66,16 @@ public class CipherCube {
             this.plaintext.append(text);
         }
         
+        populateCube(plaintext.toString());
+	//this.cipher(key.toString());
+        //System.out.println(this.plaintext);
+        //this.cipher(this.getPlaintext());
+        //this.decipher(this.getCiphertext());
+
+    }
+    public void populateCube(String text) {
+        String newText = pad(text);
+        Character[][] ref;
         for (int i = 0; i < 6; i++) {
 
             switch (i) {
@@ -101,17 +111,12 @@ public class CipherCube {
             }
             for (int j = 0; j < 5; j++) {
                 for (int k = 0; k < 5; k++) {
-                    ref[j][k] = plaintext.charAt(start);
+                    ref[j][k] = newText.charAt(start);
                     start++;
                 }
 
             }
         }
-	//this.cipher(key.toString());
-        //System.out.println(this.plaintext);
-        //this.cipher(this.getPlaintext());
-        //this.decipher(this.getCiphertext());
-
     }
 
     public void printSquares() {
@@ -136,9 +141,10 @@ public class CipherCube {
             while (strBldr.length() < 150) {
                 strBldr.append("X");
             }
-        } else {
+        } else if (text.length() > 150){
             strBldr.replace(150, text.length() - 1, "");
         }
+        
 
         text = new String(strBldr);
         return text;
@@ -201,7 +207,8 @@ public class CipherCube {
                 }
             }
         }
-        this.setPlaintext(new String(str));
+        this.setPlaintext(str.toString());
+        this.printSquares();
         
 ////////////////////////////////////////////////////////////////////////////////
     }

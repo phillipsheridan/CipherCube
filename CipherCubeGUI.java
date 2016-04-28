@@ -33,7 +33,7 @@ public class CipherCubeGUI extends Application {
         topGrid.setHgap(5.5);
         topGrid.setVgap(5.5);
         TextField tfInput = new TextField();
-        tfInput.setPrefWidth(700);
+        tfInput.setPrefWidth(1300);
         CheckBox cbPlaintext = new CheckBox("Plaintext");
         cbPlaintext.setSelected(true);
         CheckBox cbCiphertext = new CheckBox("Ciphertext");
@@ -52,7 +52,7 @@ public class CipherCubeGUI extends Application {
         plaintext = plaintext.replaceAll(" ", "");
         CipherCube cube = new CipherCube(plaintext, false);
         System.out.println(cube.getPlaintext());
-        tfInput.setText(plaintext);
+        tfInput.setText(cube.getPlaintext());
 
 //////////Temp representation of cube///////////////////////////////////////////
         StringBuilder strBldr = new StringBuilder();
@@ -132,10 +132,13 @@ public class CipherCubeGUI extends Application {
         /**
          * Event handlers for buttons
          */
-        btShuffle.setOnAction((ActionEvent e) -> {
+        btShuffle.setOnMouseReleased((e) -> {
+            
 
-                
-            //cube.printSquares();
+            cube.setPlaintext(tfInput.getText());
+            cube.populateCube(cube.getPlaintext());
+            
+            cube.printSquares();
             
             Character[][][] cubeLayout = cube.getCube();
             StringBuilder stringBldr = new StringBuilder();
@@ -162,11 +165,15 @@ public class CipherCubeGUI extends Application {
 
         });
 
-        btSolve.setOnAction((ActionEvent e) -> {
+        btSolve.setOnMouseReleased((e) -> {
+            cube.populateCube(cube.getCiphertext());
 
+            cube.decipher(cube.getKey());
+            cube.decipher(cube.getKey());
+            cube.populateCube(tfInput.getText());
             cube.printSquares();
-            cube.decipher(cube.getKey());
-            cube.decipher(cube.getKey());
+            
+            //cube.decipher(cube.getKey());
             tfInput.setText(cube.getPlaintext());
             System.out.println("Plaintext: " + cube.getPlaintext());
         });
