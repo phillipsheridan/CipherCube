@@ -1,15 +1,16 @@
 //package ciphercubegui;
 
-/**
- * imports used in testing functionality import java.io.File; import
- * java.io.IOException; import java.util.Scanner;
- */
+/** imports used in testing functionality
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+*/
+
 public class CipherCube {
 
     private StringBuilder plaintext = new StringBuilder("");
     private StringBuilder ciphertext = new StringBuilder("");
     private StringBuilder key = new StringBuilder("02303 01002 02101 00103 11111 12111 10111");
-    private String[] colorArray = new String[150];
     /*
      for key : column or row (0 or 1), face number (0-2),  index (0-4), 
      left or right/up or down (0 or 1), number of moves: four moves will reset 
@@ -29,14 +30,6 @@ public class CipherCube {
     private Character[][] square5 = new Character[5][5];
     private Character[][] square6 = new Character[5][5];
     private Character[][][] cube = {square1, square2, square3, square4, square5, square6};
-
-    private String[][] color1 = new String[5][5];
-    private String[][] color2 = new String[5][5];
-    private String[][] color3 = new String[5][5];
-    private String[][] color4 = new String[5][5];
-    private String[][] color5 = new String[5][5];
-    private String[][] color6 = new String[5][5];
-    private String[][][] colors = {color1, color2, color3, color4, color5, color6};
 
     /**
      * @param text maybe be plaintext or ciphertext
@@ -61,6 +54,7 @@ public class CipherCube {
      * }
      */
     public CipherCube(String text, Boolean spec) {
+        Character[][] ref;
 
         if (text.length() != 150) {
             text = this.pad(text);
@@ -71,20 +65,7 @@ public class CipherCube {
         } else {
             this.plaintext.append(text);
         }
-
-        populateCube(plaintext.toString());
-        populateColors();
-        updateColorArray();
-        //this.cipher(key.toString());
-        //System.out.println(this.plaintext);
-        //this.cipher(this.getPlaintext());
-        //this.decipher(this.getCiphertext());
-
-    }
-
-    public void populateCube(String text) {
-        String newText = pad(text);
-        Character[][] ref;
+        
         for (int i = 0; i < 6; i++) {
 
             switch (i) {
@@ -120,19 +101,24 @@ public class CipherCube {
             }
             for (int j = 0; j < 5; j++) {
                 for (int k = 0; k < 5; k++) {
-                    ref[j][k] = newText.charAt(start);
+                    ref[j][k] = plaintext.charAt(start);
                     start++;
                 }
 
             }
         }
+	//this.cipher(key.toString());
+        //System.out.println(this.plaintext);
+        //this.cipher(this.getPlaintext());
+        //this.decipher(this.getCiphertext());
+
     }
 
     public void printSquares() {
-
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 5; j++) {
-                for (int k = 0; k < 5; k++) {
+        
+        for(int i = 0; i < 6; i++) {
+            for(int j = 0; j < 5; j++) {
+                for(int k = 0; k < 5; k++) {
                     System.out.print(cube[i][j][k] + " ");
                 }
                 System.out.println();
@@ -150,7 +136,7 @@ public class CipherCube {
             while (strBldr.length() < 150) {
                 strBldr.append("X");
             }
-        } else if (text.length() > 150) {
+        } else {
             strBldr.replace(150, text.length() - 1, "");
         }
 
@@ -165,25 +151,26 @@ public class CipherCube {
                 System.out.println("in cipher function: calling columnSwapE");
                 columnSwapE(e);
                 
-
+                
+                
             } else if (e.charAt(0) == '1') {
                 System.out.println("in cipher function: calling rowSwapE");
                 rowSwapE(e);
                 
-
+                
+                
             }
         }
 ////////////////////////////////////////////////////////////////////////////////        
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 5; j++) {
-                for (int k = 0; k < 5; k++) {
+        for(int i = 0; i < 6; i++) {
+            for(int j = 0; j < 5; j++) {
+                for(int k = 0; k < 5; k++) {
                     str.append(cube[i][j][k]);
                 }
             }
         }
-        updateColorArray();
-        this.setCiphertext(str.toString());
+        this.setCiphertext(str.toString()); 
         this.printSquares();
 ////////////////////////////////////////////////////////////////////////////////
     }
@@ -207,24 +194,20 @@ public class CipherCube {
         }
 ////////////////////////////////////////////////////////////////////////////////
         StringBuilder str = new StringBuilder();
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 5; j++) {
-                for (int s = 0; s < 5; s++) {
+        for(int i = 0; i < 6; i++) {
+            for(int j = 0; j < 5; j++) {
+                for(int s = 0; s < 5; s++) {
                     str.append(cube[i][j][s]);
                 }
             }
         }
+        this.setPlaintext(new String(str));
         
-        this.setPlaintext(str.toString());
-        this.printSquares();
-        
-
 ////////////////////////////////////////////////////////////////////////////////
     }
 
     private void columnSwapE(String subKey) {
         Character[] temp = new Character[5];
-        String[] tempS = new String[5];
         // face can be 0-2
         char face = subKey.charAt(1);
         //index can be 0-4
@@ -248,17 +231,14 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get 1 column
                             temp[i] = cube[0][i][index];
-                            tempS[i] = colors[0][i][index];
                         }
                         // row(6) -> 1
                         for (int i = 0; i < 5; i++) {
                             cube[0][i][index] = cube[5][index][i];
-                            colors[0][i][index] = colors[5][index][i];
                         }
                         // upsidedown(3) -> row(6)
                         for (int i = 0; i < 5; i++) {
                             cube[5][index][i] = cube[2][j][index];
-                            colors[5][index][i] = colors[2][j][index];
                             j--;
                         }
                         //reset j
@@ -266,12 +246,10 @@ public class CipherCube {
                         // row(5) -> 3
                         for (int i = 0; i < 5; i++) {
                             cube[2][i][index] = cube[4][index][i];
-                            colors[2][i][index] = colors[4][index][i];
                         }
                         // upsidedown(1) -> row(5)
                         for (int i = 0; i < 5; i++) {
                             cube[4][index][i] = temp[j];
-                            colors[4][index][i] = tempS[j];
                             j--;
                         }
 
@@ -284,13 +262,11 @@ public class CipherCube {
 
                         for (int i = 0; i < 5; i++) {
                             // get 1 column
-                            temp[i] = cube[0][i][index];
-                            tempS[i] = colors[0][i][index];
+                            temp[i] = cube[0][i][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(row(5)) -> 1
                             cube[0][i][index] = cube[5][index][j];
-                            colors[0][i][index] = colors[5][index][j];
                             j--;
                         }
                         //reset j
@@ -298,12 +274,10 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //3 -> row(5)
                             cube[4][index][i] = cube[2][i][index];
-                            colors[4][index][i] = colors[2][i][index];
                         }
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(row(6)) -> 3
                             cube[2][i][index] = cube[5][index][j];
-                            colors[2][i][index] = colors[5][index][j];
                             j--;
                         }
                         //reset j
@@ -311,7 +285,6 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             // 1 -> row(6)
                             cube[5][index][i] = temp[i];
-                            colors[5][index][i] = tempS[i];
                         }
                     }
                 }
@@ -328,17 +301,14 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get square2 column
                             temp[i] = cube[1][i][index];
-                            tempS[i] = colors[1][i][index];
                         }
                         // 6 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][i][index] = cube[5][i][index];
-                            colors[1][i][index] = colors[5][i][index];
                         }
                         // upsidedown(4) -> 6
                         for (int i = 0; i < 5; i++) {
                             cube[5][i][index] = cube[3][j][index];
-                            colors[5][i][index] = colors[3][j][index];
                             j--;
                         }
                         //reset j
@@ -346,7 +316,6 @@ public class CipherCube {
                         // upsidedown(5) -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][i][index] = cube[4][j][index];
-                            colors[3][i][index] = colors[4][j][index];
                             j--;
                         }
                         //reset j
@@ -354,7 +323,6 @@ public class CipherCube {
                         // 2 -> 5
                         for (int i = 0; i < 5; i++) {
                             cube[4][i][index] = temp[i];
-                            colors[4][i][index] = tempS[i];
                         }
                     }
                 } else //down
@@ -365,20 +333,17 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get square2 column
                             temp[i] = cube[1][i][index];
-                            tempS[i] = colors[1][i][index];
                         }
 
                         // 5 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][i][index] = cube[4][i][index];
-                            colors[1][i][index] = colors[4][i][index];
 
                         }
                         // upsidedown(4) -> 5
 
                         for (int i = 0; i < 5; i++) {
                             cube[4][i][index] = cube[3][j][index];
-                            colors[4][i][index] = colors[3][j][index];
                             j--;
                         }
                         //reset j
@@ -386,7 +351,6 @@ public class CipherCube {
                         // upsidedown(6) -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][i][index] = cube[5][j][index];
-                            colors[3][i][index] = colors[5][j][index];
                             j--;
 
                         }
@@ -395,7 +359,6 @@ public class CipherCube {
                         // 2 -> 6
                         for (int i = 0; i < 5; i++) {
                             cube[5][i][index] = temp[i];
-                            colors[5][i][index] = tempS[i];
                         }
 
                     }
@@ -415,29 +378,24 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get square5 column
                             temp[i] = cube[4][i][index];
-                            tempS[i] = colors[4][i][index];
                         }
                         // 2 -> 5
                         for (int i = 0; i < 5; i++) {
                             cube[4][i][index] = cube[1][i][index];
-                            colors[4][i][index] = colors[1][i][index];
                         }
                         // 6 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][i][index] = cube[5][i][index];
-                            colors[1][i][index] = colors[5][i][index];
                         }
                         // upsidedown(4) -> 6
                         for (int i = 0; i < 5; i++) {
                             cube[5][i][index] = cube[3][i][index];
-                            colors[5][i][index] = colors[3][i][index];
                         }
                         //reset j
                         j = 4;
                         // upsidedown(5) -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][i][index] = temp[i];
-                            colors[3][i][index] = tempS[i];
                         }
                     }
                 } else //down
@@ -448,19 +406,16 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get square5 column
                             temp[i] = cube[4][i][index];
-                            tempS[i] = colors[4][i][index];
                         }
                         // upsidedown(4) -> 5
                         for (int i = 0; i < 5; i++) {
                             cube[4][i][index] = cube[3][j][index];
-                            colors[4][i][index] = colors[3][j][index];
                             j--;
                         }
                         j = 4;
                         // upsidedown(6) -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][i][index] = cube[5][j][index];
-                            colors[3][i][index] = colors[5][j][index];
                             j--;
                         }
                         //reset j
@@ -468,7 +423,6 @@ public class CipherCube {
                         // 2 -> 6
                         for (int i = 0; i < 5; i++) {
                             cube[5][i][index] = cube[1][j][index];
-                            colors[5][i][index] = colors[1][j][index];
                             j--;
                         }
                         //reset j
@@ -476,7 +430,6 @@ public class CipherCube {
                         // 5 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][i][index] = temp[i];
-                            colors[1][i][index] = tempS[i];
                         }
                     }
                 }
@@ -489,7 +442,6 @@ public class CipherCube {
 
     private void columnSwapD(String subKey) {
         Character[] temp = new Character[5];
-        String[] tempS = new String[5];
         // face can be 0-2
         char face = subKey.charAt(1);
         //index can be 0-4
@@ -519,17 +471,17 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get 1 column
                             temp[i] = cube[0][i][index];
-                            tempS[i] = colors[0][i][index];
                         }
+
                         // row(6) -> 1
                         for (int i = 0; i < 5; i++) {
                             cube[0][i][index] = cube[5][index][i];
-                            colors[0][i][index] = colors[5][index][i];
+
                         }
                         // upsidedown(3) -> row(6)
+
                         for (int i = 0; i < 5; i++) {
                             cube[5][index][i] = cube[2][j][index];
-                            colors[5][index][i] = colors[2][j][index];
                             j--;
                         }
                         //reset j
@@ -537,12 +489,11 @@ public class CipherCube {
                         // row(5) -> 3
                         for (int i = 0; i < 5; i++) {
                             cube[2][i][index] = cube[4][index][i];
-                            colors[2][i][index] = colors[4][index][i];
+
                         }
                         // upsidedown(1) -> row(5)
                         for (int i = 0; i < 5; i++) {
                             cube[4][index][i] = temp[j];
-                            colors[4][index][i] = tempS[j];
                             j--;
                         }
 
@@ -556,33 +507,32 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             // get 1 column
                             temp[i] = cube[0][i][index];
-                            tempS[i] = colors[0][i][index];
                         }
+
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(row(5)) -> 1
                             cube[0][i][index] = cube[4][index][j];
-                            colors[0][i][index] = colors[4][index][j];
                             j--;
+
                         }
                         //reset j
                         j = 4;
                         for (int i = 0; i < 5; i++) {
                             //3 -> row(5)
                             cube[4][index][i] = cube[2][i][index];
-                            colors[4][index][i] = colors[2][i][index];
                         }
+
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(row(6)) -> 3
                             cube[2][i][index] = cube[5][index][j];
-                            colors[2][i][index] = colors[5][index][j];
                             j--;
+
                         }
                         //reset j
                         j = 4;
                         for (int i = 0; i < 5; i++) {
                             // 1 -> row(6)
                             cube[5][index][i] = temp[i];
-                            colors[5][index][i] = tempS[i];
                         }
 
                     }
@@ -601,17 +551,17 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get square2 column
                             temp[i] = cube[1][i][index];
-                            tempS[i] = colors[1][i][index];
                         }
+
                         // 6 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][i][index] = cube[5][i][index];
-                            colors[1][i][index] = colors[5][i][index];
+
                         }
                         // upsidedown(4) -> 6
+
                         for (int i = 0; i < 5; i++) {
                             cube[5][i][index] = cube[3][j][index];
-                            colors[5][i][index] = colors[3][j][index];
                             j--;
                         }
                         //reset j
@@ -619,16 +569,16 @@ public class CipherCube {
                         // upsidedown(5) -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][i][index] = cube[4][j][index];
-                            colors[3][i][index] = colors[4][j][index];
                             j--;
+
                         }
                         //reset j
                         j = 4;
                         // 2 -> 5
                         for (int i = 0; i < 5; i++) {
                             cube[4][i][index] = temp[i];
-                            colors[4][i][index] = tempS[i];
                         }
+
                     }
                 } else //down
                 {
@@ -638,20 +588,17 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get square2 column
                             temp[i] = cube[1][i][index];
-                            tempS[i] = colors[1][i][index];
                         }
 
                         // 5 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][i][index] = cube[4][i][index];
-                            colors[1][i][index] = colors[4][i][index];
 
                         }
                         // upsidedown(4) -> 5
 
                         for (int i = 0; i < 5; i++) {
                             cube[4][i][index] = cube[3][j][index];
-                            colors[4][i][index] = colors[3][j][index];
                             j--;
                         }
                         //reset j
@@ -659,7 +606,6 @@ public class CipherCube {
                         // upsidedown(6) -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][i][index] = cube[5][j][index];
-                            colors[3][i][index] = colors[5][j][index];
                             j--;
 
                         }
@@ -668,7 +614,6 @@ public class CipherCube {
                         // 2 -> 6
                         for (int i = 0; i < 5; i++) {
                             cube[5][i][index] = temp[i];
-                            colors[5][i][index] = tempS[i];
                         }
 
                     }
@@ -688,22 +633,20 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get square5 column
                             temp[i] = cube[4][i][index];
-                            tempS[i] = colors[4][i][index];
                         }
+
                         // 2 -> 5
                         for (int i = 0; i < 5; i++) {
                             cube[4][i][index] = cube[1][i][index];
-                            colors[4][i][index] = colors[1][i][index];
+
                         }
                         // 6 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][i][index] = cube[5][i][index];
-                            colors[1][i][index] = colors[5][i][index];
                         }
                         // upsidedown(4) -> 6
                         for (int i = 0; i < 5; i++) {
                             cube[5][i][index] = cube[3][j][index];
-                            colors[5][i][index] = colors[3][j][index];
                             j--;
                         }
                         //reset j
@@ -711,7 +654,6 @@ public class CipherCube {
                         // upsidedown(5) -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][i][index] = temp[j];
-                            colors[3][i][index] = tempS[j];
                             j--;
                         }
                     }
@@ -723,35 +665,28 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get square5 column
                             temp[i] = cube[4][i][index];
-                            tempS[i] = colors[4][i][index];
                         }
                         // upsidedown(4) -> 5
                         for (int i = 0; i < 5; i++) {
                             cube[4][i][index] = cube[3][j][index];
-                            colors[4][i][index] = colors[3][j][index];
                             j--;
                         }
                         j = 4;
                         // upsidedown(6) -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][i][index] = cube[5][j][index];
-                            colors[3][i][index] = colors[5][j][index];
                             j--;
                         }
                         //reset j
                         j = 4;
                         // 2 -> 6
                         for (int i = 0; i < 5; i++) {
-                            cube[5][i][index] = cube[1][j][index];
-                            colors[5][i][index] = colors[1][j][index];
-                            j--;
+                            cube[5][i][index] = cube[1][i][index];
                         }
                         //reset j
-                        j = 4;
                         // 5 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][i][index] = temp[i];
-                            colors[1][i][index] = tempS[i];
                         }
                     }
                 }
@@ -763,7 +698,6 @@ public class CipherCube {
 
     private void rowSwapE(String subKey) {
         Character[] temp = new Character[5];
-        String[] tempS = new String[5];
         // face can be 0-2 
         char face = subKey.charAt(1);
         //index can be 0-4
@@ -782,27 +716,22 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get a row
                             temp[i] = cube[0][index][i];
-                            tempS[i] = colors[0][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 2 -> 1
                             cube[0][index][i] = cube[1][index][i];
-                            colors[0][index][i] = colors[1][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 3 -> 2
                             cube[1][index][i] = cube[2][index][i];
-                            colors[1][index][i] = colors[2][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 4 -> 3
                             cube[2][index][i] = cube[3][index][i];
-                            colors[2][index][i] = colors[3][index][i];
                         }
                         //1 -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][index][i] = temp[i];
-                            colors[3][index][i] = tempS[i];
                         }
                     }
                 } else {
@@ -812,27 +741,22 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get a row
                             temp[i] = cube[0][index][i];
-                            tempS[i] = colors[0][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 4 -> 1
                             cube[0][index][i] = cube[3][index][i];
-                            colors[0][index][i] = colors[3][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 3 -> 4
                             cube[3][index][i] = cube[2][index][i];
-                            colors[3][index][i] = colors[2][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 2 -> 3
                             cube[2][index][i] = cube[1][index][i];
-                            colors[2][index][i] = colors[1][index][i];
                         }
                         //1 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][index][i] = temp[i];
-                            colors[1][index][i] = tempS[i];
                         }
                     }
                 }
@@ -847,27 +771,21 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get row 2
                             temp[i] = cube[1][index][i];
-                            tempS[i] = colors[1][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 3 -> 2
                             cube[1][index][i] = cube[2][index][i];
-                            colors[1][index][i] = colors[2][index][i];
                         }
-                        for (int i = 0; i < 5; i++) {
-                            // 4 -> 3
+                        for (int i = 0; i < 5; i++) {                            // 4 -> 3
                             cube[2][index][i] = cube[3][index][i];
-                            colors[2][index][i] = colors[3][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 1 -> 4
                             cube[3][index][i] = cube[0][index][i];
-                            colors[3][index][i] = colors[0][index][i];
                         }
                         //2 -> 1
                         for (int i = 0; i < 5; i++) {
                             cube[0][index][i] = temp[i];
-                            colors[0][index][i] = tempS[i];
                         }
                     }
                 } else {
@@ -877,27 +795,22 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get row 2
                             temp[i] = cube[1][index][i];
-                            tempS[i] = colors[1][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 1 -> 2 
                             cube[1][index][i] = cube[0][index][i];
-                            colors[1][index][i] = colors[0][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 4 -> 1
                             cube[0][index][i] = cube[3][index][i];
-                            colors[0][index][i] = colors[3][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 3 -> 4
                             cube[3][index][i] = cube[2][index][i];
-                            colors[3][index][i] = colors[2][index][i];
                         }
                         //2 -> 3
                         for (int i = 0; i < 5; i++) {
                             cube[2][index][i] = temp[i];
-                            colors[2][index][i] = tempS[i];
                         }
                     }
                 }
@@ -914,17 +827,14 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get row 5
                             temp[i] = cube[4][index][i];
-                            tempS[i] = colors[4][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // col(3) -> row(5)
                             cube[4][index][i] = cube[2][i][index];
-                            colors[4][index][i] = colors[2][i][index];
                         }
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(6) -> col(3)
                             cube[2][i][index] = cube[5][index][j];
-                            colors[2][i][index] = colors[5][index][j];
                             j--;
                         }
                         //reset j
@@ -932,12 +842,10 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             // col(1) -> 6
                             cube[5][index][i] = cube[0][i][index];
-                            colors[5][index][i] = colors[0][i][index];
                         }
                         //upsidedown(5) -> col(1)
                         for (int i = 0; i < 5; i++) {
                             cube[0][i][index] = temp[j];
-                            colors[0][i][index] = tempS[j];
                             j--;
                         }
                     }
@@ -948,12 +856,10 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get row 5
                             temp[i] = cube[4][index][i];
-                            tempS[i] = colors[4][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(col(1)) -> 5
                             cube[4][index][i] = cube[0][j][index];
-                            colors[4][index][i] = colors[0][j][index];
                             j--;
                         }
                         j = 4;
@@ -961,19 +867,16 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             // 6 -> col(1)
                             cube[0][i][index] = cube[5][index][i];
-                            colors[0][i][index] = colors[5][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(col(3)) -> 6
                             cube[5][index][i] = cube[2][j][index];
-                            colors[5][index][i] = colors[2][j][index];
                             j--;
                         }
                         j = 4;
                         //5 -> col(3)
                         for (int i = 0; i < 5; i++) {
                             cube[2][i][index] = temp[i];
-                            colors[2][i][index] = tempS[i];
                         }
                     }
                 }
@@ -985,7 +888,6 @@ public class CipherCube {
 
     private void rowSwapD(String subKey) {
         Character[] temp = new Character[5];
-        String[] tempS = new String[5];
         // face can be 0-2 
         char face = subKey.charAt(1);
         //index can be 0-4
@@ -1013,57 +915,47 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get a row
                             temp[i] = cube[0][index][i];
-                            tempS[i] = colors[0][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 2 -> 1
                             cube[0][index][i] = cube[1][index][i];
-                            colors[0][index][i] = colors[1][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 3 -> 2
                             cube[1][index][i] = cube[2][index][i];
-                            colors[1][index][i] = colors[2][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 4 -> 3
                             cube[2][index][i] = cube[3][index][i];
-                            colors[2][index][i] = colors[3][index][i];
                         }
                         //1 -> 4
                         for (int i = 0; i < 5; i++) {
                             cube[3][index][i] = temp[i];
-                            colors[3][index][i] = tempS[i];
                         }
                     }
                 } else {
-                    //right
+                    //left
                     for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
 
                         for (int i = 0; i < 5; i++) {
                             //get a row
                             temp[i] = cube[0][index][i];
-                            tempS[i] = colors[0][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 4 -> 1
                             cube[0][index][i] = cube[3][index][i];
-                            colors[0][index][i] = colors[3][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 3 -> 4
                             cube[3][index][i] = cube[2][index][i];
-                            colors[3][index][i] = colors[2][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 2 -> 3
                             cube[2][index][i] = cube[1][index][i];
-                            colors[2][index][i] = colors[1][index][i];
                         }
                         //1 -> 2
                         for (int i = 0; i < 5; i++) {
                             cube[1][index][i] = temp[i];
-                            colors[1][index][i] = tempS[i];
                         }
                     }
                 }
@@ -1078,27 +970,22 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get row 2
                             temp[i] = cube[1][index][i];
-                            tempS[i] = colors[1][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 3 -> 2
                             cube[1][index][i] = cube[2][index][i];
-                            colors[1][index][i] = colors[2][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 4 -> 3
                             cube[2][index][i] = cube[3][index][i];
-                            colors[2][index][i] = colors[3][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 1 -> 4
                             cube[3][index][i] = cube[0][index][i];
-                            colors[3][index][i] = colors[0][index][i];
                         }
                         //2 -> 1
                         for (int i = 0; i < 5; i++) {
                             cube[0][index][i] = temp[i];
-                            colors[0][index][i] = tempS[i];
                         }
                     }
                 } else {
@@ -1108,27 +995,22 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get row 2
                             temp[i] = cube[1][index][i];
-                            tempS[i] = colors[1][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 1 -> 2 
                             cube[1][index][i] = cube[0][index][i];
-                            colors[1][index][i] = colors[0][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 4 -> 1
                             cube[0][index][i] = cube[3][index][i];
-                            colors[0][index][i] = colors[3][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // 3 -> 4
                             cube[3][index][i] = cube[2][index][i];
-                            colors[3][index][i] = colors[2][index][i];
                         }
                         //2 -> 3
                         for (int i = 0; i < 5; i++) {
                             cube[2][index][i] = temp[i];
-                            colors[2][index][i] = tempS[i];
                         }
                     }
                 }
@@ -1145,17 +1027,14 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             //get row 5
                             temp[i] = cube[4][index][i];
-                            tempS[i] = colors[4][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // col(3) -> row(5)
                             cube[4][index][i] = cube[2][i][index];
-                            colors[4][index][i] = colors[2][i][index];
                         }
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(6) -> col(3)
                             cube[2][i][index] = cube[5][index][j];
-                            colors[2][i][index] = colors[5][index][j];
                             j--;
                         }
                         //reset j
@@ -1163,28 +1042,23 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             // col(1) -> 6
                             cube[5][index][i] = cube[0][i][index];
-                            colors[5][index][i] = colors[0][i][index];
                         }
                         //upsidedown(5) -> col(1)
                         for (int i = 0; i < 5; i++) {
                             cube[0][i][index] = temp[j];
-                            colors[0][i][index] = tempS[j];
                             j--;
                         }
                     }
                 } else {
                     //right
                     for (int m = 0; m < Integer.parseInt(Character.toString(numberOfMoves)); m++) {
-
                         for (int i = 0; i < 5; i++) {
                             //get row 5
                             temp[i] = cube[4][index][i];
-                            tempS[i] = colors[4][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(col(1)) -> 5
                             cube[4][index][i] = cube[0][j][index];
-                            colors[4][index][i] = colors[0][j][index];
                             j--;
                         }
                         j = 4;
@@ -1192,19 +1066,16 @@ public class CipherCube {
                         for (int i = 0; i < 5; i++) {
                             // 6 -> col(1)
                             cube[0][i][index] = cube[5][index][i];
-                            colors[0][i][index] = colors[5][index][i];
                         }
                         for (int i = 0; i < 5; i++) {
                             // upsidedown(col(3)) -> 6
                             cube[5][index][i] = cube[2][j][index];
-                            colors[5][index][i] = colors[2][j][index];
                             j--;
                         }
                         j = 4;
                         //5 -> col(3)
                         for (int i = 0; i < 5; i++) {
                             cube[2][i][index] = temp[i];
-                            colors[2][i][index] = tempS[i];
                         }
                     }
                 }
@@ -1239,76 +1110,9 @@ public class CipherCube {
         this.ciphertext = new StringBuilder(ciphertext);
         //this.decipher(new String(this.key));
     }
-
+    
     public Character[][][] getCube() {
         return this.cube;
     }
 
-    public void updateColorArray() {
-        int value = 0;
-        for (int i = 0; i < 6; i++) {
-            for (int j = 0; j < 5; j++) {
-                for (int k = 0; k < 5; k++) {
-                    colorArray[value] = colors[i][j][k];
-                    value++;
-                }
-            }
-        }
-    }
-    public String[] getColorArray()  {
-        return this.colorArray;
-    }
-
-    public void populateColors() {
-        String[][] ref;
-        String color;
-        for (int i = 0; i < 6; i++) {
-
-            switch (i) {
-
-                case 0:
-                    ref = color1;
-                    color = "blue";
-
-                    break;
-                case 1:
-                    ref = color2;
-                    color = "orange";
-
-                    break;
-                case 2:
-                    ref = color3;
-                    color = "yellow";
-
-                    break;
-                case 3:
-                    ref = color4;
-                    color = "green";
-
-                    break;
-                case 4:
-                    ref = color5;
-                    color = "pink";
-
-                    break;
-                case 5:
-                    ref = color6;
-                    color = "red";
-
-                    break;
-                default:
-                    color = "red";
-                    ref = color1;
-                    System.exit(1);
-
-            }
-            for (int j = 0; j < 5; j++) {
-                for (int k = 0; k < 5; k++) {
-                    ref[j][k] = color;
-
-                }
-
-            }
-        }
-    }
 }
